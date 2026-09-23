@@ -1,0 +1,61 @@
+import streamlit as st
+import xgboost as xgb
+import numpy as np
+import joblib
+
+st.set_page_config(page_title="Uskuna Nosozligi Bashoratchisi", page_icon="⚙️")
+st.title("⚙️ Uskuna Nosozligini Bashorat Qilish Tizimi")
+
+# Modellarni yuklaymiz (ilova ishga tushganda bir marta)
+@st.cache_resource
+def load_models():
+    m1 = xgb.XGBClassifier()
+    m1.load_model('failure_model.json')
+
+    m2 = xgb.XGBClassifier()
+    m2.load_model('reason_model.json')
+
+    le = joblib.load('label_encoder.pkl')
+    return m1, m2, le
+
+model, model_reason, le = load_models()
+
+st.subheader("Sensor ko'rsatkichlarini kiriting")
+
+col1, col2 = st.columns(2)
+with col1:
+    type_ = st.selectbox("Mahsulot turi", ["L", "M", "H"])
+    air_temp = st.number_input("Havo harorati (K)", value=298.0)
+    process_temp = st.number_input("Jarayon harorati (K)", value=308.0)
+with col2:
+    rot_speed = st.number_input("Aylanish tezligi (rpm)", value=1500)
+    torque = st.number_input("Moment (Nm)", value=40.0)
+    tool_wear = st.number_input("Asbob eskirishi (min)", value=100)
+
+type_map = {"L": 0, "M": 1, "H": 2}
+
+if st.button("Bashorat qilish"):
+    X_input = np.array([[type_map[type_], air_temp, process_temp, 
+                          rot_speed, torque, tool_wear]])
+
+    # 1-model: buziladimi yoki yo'q
+    proba_fail = model.predict_proba(X_input)[0][1]
+
+    st.metric("Buzilish ehtimoli", f"{proba_fail*100:.1f}%")
+
+    if proba_fail > 0.5:
+        st.error("⚠️ Yuqori xavf! Mashina buzilishi mumkin.")
+
+        # 2-model: sababi qaysi turdan
+        reason_pred = model_reason.predict(X_input)[0]
+        reason_name = le.inverse_transform([reason_pred])[0]
+
+        reason_full = {
+            "TWF": "Asbob eskirishi (Tool Wear Failure)",
+            "HDF": "Issiqlik chiqmasligi (Heat Dissipation Failure)",
+            "PWF": "Quvvat muammosi (Power Failure)",
+            "OSF": "Haddan tashqari zo'riqish (Overstrain Failure)"
+        }
+        st.warning(f"Ehtimoliy sabab: **{reason_full.get(reason_name, reason_name)}**")
+    else:
+        st.success("✅ Mashina normal holatda ishlashi kutilmoqda.")
