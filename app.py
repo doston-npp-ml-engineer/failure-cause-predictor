@@ -3,10 +3,7 @@ import xgboost as xgb
 import numpy as np
 import joblib
 
-st.set_page_config(page_title="Uskuna Nosozligi Bashoratchisi", page_icon="⚙️")
-st.title("⚙️ Uskuna Nosozligini Bashorat Qilish Tizimi")
-
-import base64
+st.set_page_config(page_title="Uskuna Nosozligi Bashoratchisi", page_icon="⚙️", layout="wide")
 
 # --- Orqa fon va umumiy stil ---
 st.markdown("""
@@ -34,15 +31,28 @@ h1, h2, h3, p, label, .stMarkdown {
 .author-box {
     background: rgba(255,255,255,0.07);
     border-left: 3px solid #ffd166;
-    padding: 12px 18px;
+    padding: 12px 16px;
     border-radius: 6px;
-    margin-top: 25px;
     font-size: 14px;
+    line-height: 1.7;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# Modellarni yuklaymiz (ilova ishga tushganda bir marta)
+st.title("⚙️ Uskuna Nosozligini Bashorat Qilish Tizimi")
+
+# --- Sidebar: muallif ma'lumoti ---
+with st.sidebar:
+    st.markdown("""
+    <div class="author-box">
+    ⚙️ <b>Loyiha muallifi:</b><br>Ashirov Dostonbek<br><br>
+    🎓 Energetika muhandisligi fakulteti<br>4-kurs<br><br>
+    📧 pperceptron@gmail.com<br><br>
+    🔗 <a href="https://github.com/doston-npp-ml-engineer" style="color:#ffd166;" target="_blank">GitHub</a>
+    </div>
+    """, unsafe_allow_html=True)
+
+# --- Modellarni yuklaymiz (ilova ishga tushganda bir marta) ---
 @st.cache_resource
 def load_models():
     m1 = xgb.XGBClassifier()
@@ -71,10 +81,9 @@ with col2:
 type_map = {"L": 0, "M": 1, "H": 2}
 
 if st.button("Bashorat qilish"):
-    X_input = np.array([[type_map[type_], air_temp, process_temp, 
+    X_input = np.array([[type_map[type_], air_temp, process_temp,
                           rot_speed, torque, tool_wear]])
 
-    # 1-model: buziladimi yoki yo'q
     proba_fail = model.predict_proba(X_input)[0][1]
 
     st.metric("Buzilish ehtimoli", f"{proba_fail*100:.1f}%")
@@ -82,7 +91,6 @@ if st.button("Bashorat qilish"):
     if proba_fail > 0.5:
         st.error("⚠️ Yuqori xavf! Mashina buzilishi mumkin.")
 
-        # 2-model: sababi qaysi turdan
         reason_pred = model_reason.predict(X_input)[0]
         reason_name = le.inverse_transform([reason_pred])[0]
 
@@ -95,14 +103,3 @@ if st.button("Bashorat qilish"):
         st.warning(f"Ehtimoliy sabab: **{reason_full.get(reason_name, reason_name)}**")
     else:
         st.success("✅ Mashina normal holatda ishlashi kutilmoqda.")
-
-
-st.markdown("---")
-st.markdown("""
-<div class="author-box">
-⚙️ <b>Loyiha muallifi:</b> Ashirov Dostonbek<br>
-🎓 Energetika muhandisligi fakulteti, 4-kurs<br>
-📧 pperceptron@gmail.com<br>
-🔗 <a href="https://github.com/doston-npp-ml-engineer" style="color:#ffd166;" target="_blank">GitHub: doston-npp-ml-engineer</a>
-</div>
-""", unsafe_allow_html=True)
