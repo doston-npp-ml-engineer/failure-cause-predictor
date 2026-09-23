@@ -6,6 +6,42 @@ import joblib
 st.set_page_config(page_title="Uskuna Nosozligi Bashoratchisi", page_icon="⚙️")
 st.title("⚙️ Uskuna Nosozligini Bashorat Qilish Tizimi")
 
+import base64
+
+# --- Orqa fon va umumiy stil ---
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    background-attachment: fixed;
+}
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 15px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 15px);
+    pointer-events: none;
+    z-index: 0;
+}
+h1, h2, h3, p, label, .stMarkdown {
+    color: #f0f0f0 !important;
+}
+[data-testid="stMetricValue"] {
+    color: #ffd166 !important;
+}
+.author-box {
+    background: rgba(255,255,255,0.07);
+    border-left: 3px solid #ffd166;
+    padding: 12px 18px;
+    border-radius: 6px;
+    margin-top: 25px;
+    font-size: 14px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Modellarni yuklaymiz (ilova ishga tushganda bir marta)
 @st.cache_resource
 def load_models():
@@ -59,3 +95,14 @@ if st.button("Bashorat qilish"):
         st.warning(f"Ehtimoliy sabab: **{reason_full.get(reason_name, reason_name)}**")
     else:
         st.success("✅ Mashina normal holatda ishlashi kutilmoqda.")
+
+
+st.markdown("---")
+st.markdown("""
+<div class="author-box">
+⚙️ <b>Loyiha muallifi:</b> Ashirov Dostonbek<br>
+🎓 Energetika muhandisligi fakulteti, 4-kurs<br>
+📧 pperceptron@gmail.com<br>
+🔗 <a href="https://github.com/doston-npp-ml-engineer" style="color:#ffd166;" target="_blank">GitHub: doston-npp-ml-engineer</a>
+</div>
+""", unsafe_allow_html=True)
