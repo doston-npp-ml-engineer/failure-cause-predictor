@@ -4,6 +4,23 @@ import numpy as np
 import joblib
 
 st.set_page_config(page_title="Uskuna Nosozligi Bashoratchisi", page_icon="⚙️")
+
+# --- Orqa fon ---
+st.markdown("""
+<style>
+.stApp {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    background-attachment: fixed;
+}
+h1, h2, h3, p, label, .stMarkdown, .stCaption {
+    color: #f0f0f0 !important;
+}
+[data-testid="stMetricValue"] {
+    color: #ffd166 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("⚙️ Uskuna Nosozligini Bashorat Qilish Tizimi")
 
 # Modellarni yuklaymiz (ilova ishga tushganda bir marta)
