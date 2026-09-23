@@ -26,7 +26,7 @@ ehtimoliy sababini bashorat qiladi.
   PWF (quvvat muammosi), OSF (haddan tashqari zo'riqish)
 - **Natijalar:** Accuracy ≈ 0.98, F1 (macro) ≈ 0.98
 
-## ⚠️ Cheklovlar (halol e'tirof)
+## ⚠️ Cheklovlar
 
 - Sabab-model uchun test to'plami kichik (46 namuna) — kattaroq ma'lumot bilan 
   qo'shimcha tekshirish tavsiya etiladi
